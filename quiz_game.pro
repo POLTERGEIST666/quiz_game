@@ -19,3 +19,16 @@ HEADERS += \
 qnx: target.path = /tmp/$${TARGET}/bin
 else: unix:!android: target.path = /opt/$${TARGET}/bin
 !isEmpty(target.path): INSTALLS += target
+
+DISTFILES += \
+    data/app-graphics/allgames.png \
+    data/app-graphics/endgame.png \
+    data/app-graphics/logic-games.png \
+    data/app-graphics/math-games.png \
+    data/app-graphics/memory-games.png \
+    data/app-graphics/pause.png \
+    data/app-graphics/resume.png \
+    data/app-graphics/verbal-games.png
+
+RESOURCES += \
+    data.qrc

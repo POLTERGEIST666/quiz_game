@@ -1,0 +1,17 @@
+<RCC>
+    <qresource prefix="/app-graphics"/>
+    <qresource prefix="/data">
+        <file>app-graphics/allgames.png</file>
+        <file>app-graphics/endgame.png</file>
+        <file>app-graphics/logic-games.png</file>
+        <file>app-graphics/math-games.png</file>
+        <file>app-graphics/memory-games.png</file>
+        <file>app-graphics/pause.png</file>
+        <file>app-graphics/resume.png</file>
+        <file>app-graphics/verbal-games.png</file>
+        <file>app-graphics/backgroundWallpaper.jpg</file>
+        <file>app-graphics/ok.png</file>
+        <file>app-graphics/next.png</file>
+        <file>app-graphics/tip.png</file>
+    </qresource>
+</RCC>

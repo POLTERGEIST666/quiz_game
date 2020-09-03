@@ -9,7 +9,10 @@
 #include <QLabel>
 #include <QToolBar>
 #include <QToolButton>
-
+#include <QPushButton>
+#include <QGridLayout>
+#include <QLineEdit>
+#include <QSplitter>
 
 
 QT_BEGIN_NAMESPACE
@@ -23,7 +26,7 @@ class MainWindow : public QMainWindow
 public:
     MainWindow(QWidget *parent = nullptr);
     ~MainWindow();
-
+    void que_one();
 
 private:
     Ui::MainWindow *ui;
@@ -72,6 +75,7 @@ private:
 
     //Tool Bar
     QToolBar* toolBar;
+    QToolBar* answerToolbar;
 
     QToolButton* pcmdAll;
     QToolButton* pcmdLogic;
@@ -82,6 +86,8 @@ private:
     QToolButton* pcmdEnd;
 
 
+    //Central widget
+    QWidget* centralWidget;
 
 
 

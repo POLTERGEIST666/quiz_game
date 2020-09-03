@@ -12,7 +12,7 @@ MainWindow::MainWindow(QWidget *parent)
 
 {
 
-    resize(800,600);
+    resize(800,650);
     setWindowTitle("Quiz");
 
 
@@ -116,48 +116,51 @@ MainWindow::MainWindow(QWidget *parent)
 
 
     //setting background
-    mainBackgroundPallete.setBrush(this->backgroundRole(),QBrush(QPixmap("C:/Users/sergo/Documents/QtProjects/3156605.jpg")));
+    mainBackgroundPallete.setBrush(this->backgroundRole(),QBrush(QPixmap(":/data/app-graphics/backgroundWallpaper.jpg")));
     //this->setPalette(mainBackgroundPallete);
 
 
 
     toolBar = new QToolBar;
+    answerToolbar = new QToolBar;
 
 
 
-    QPixmap pixAll("C:/Users/sergo/Documents/QtProjects/QuizGame/data/app-graphics/allgames.png");
+    QPixmap pixAll(":/data/app-graphics/allgames.png");
 
     pcmdAll = new QToolButton;
     pcmdAll->setToolButtonStyle(Qt::ToolButtonTextUnderIcon );
     pcmdAll->setIcon(pixAll);
     pcmdAll->setText("All");
+   // QObject::connect(pcmdAll,SIGNAL(clicked()));
 
-    QPixmap pixLogic("C:/Users/sergo/Documents/QtProjects/QuizGame/data/app-graphics/logic-games.png");
+    QPixmap pixLogic(":/data/app-graphics/logic-games");
     pcmdLogic = new QToolButton();
     pcmdLogic->setToolButtonStyle(Qt::ToolButtonTextUnderIcon);
     pcmdLogic->setIcon(pixLogic);
     pcmdLogic->setText("Logic");
 
 
-    QPixmap pixMath("C:/Users/sergo/Documents/QtProjects/QuizGame/data/app-graphics/math-games.png");
+    QPixmap pixMath(":/data/app-graphics/math-games");
     pcmdMath = new QToolButton;
     pcmdMath->setToolButtonStyle(Qt::ToolButtonTextUnderIcon);
     pcmdMath->setIcon(pixMath);
     pcmdMath->setText("Math");
+    QObject::connect(pcmdMath,SIGNAL(clicked()),SLOT(mathGame()));
 
-    QPixmap pixMemory("C:/Users/sergo/Documents/QtProjects/QuizGame/data/app-graphics/memory-games.png");
+    QPixmap pixMemory(":/data/app-graphics/memory-games.png");
     pcmdMemory = new QToolButton();
     pcmdMemory->setToolButtonStyle(Qt::ToolButtonTextUnderIcon);
     pcmdMemory->setIcon(pixMemory);
     pcmdMemory->setText("Memory");
 
-    QPixmap pixVerbal("C:/Users/sergo/Documents/QtProjects/QuizGame/data/app-graphics/verbal-games.png");
+    QPixmap pixVerbal(":/data/app-graphics/verbal-games.png");
     pcmdVerbal = new QToolButton;
     pcmdVerbal->setToolButtonStyle(Qt::ToolButtonTextUnderIcon);
     pcmdVerbal->setIcon(pixVerbal);
     pcmdVerbal->setText("Verbal");
 
-    QPixmap pixPause("C:/Users/sergo/Documents/QtProjects/QuizGame/data/app-graphics/pause.png");
+    QPixmap pixPause(":/data/app-graphics/pause.png");
     pcmdPause = new QToolButton;
     pcmdPause->setToolButtonStyle(Qt::ToolButtonTextUnderIcon);
     pcmdPause->setIcon(pixPause);
@@ -166,7 +169,7 @@ MainWindow::MainWindow(QWidget *parent)
 
 
 
-    QPixmap pixEnd("C:/Users/sergo/Documents/QtProjects/QuizGame/data/app-graphics/endgame.png");
+    QPixmap pixEnd(":/data/app-graphics/endgame.png");
     pcmdEnd = new QToolButton;
     pcmdEnd->setToolButtonStyle(Qt::ToolButtonTextUnderIcon);
     pcmdEnd->setIcon(pixEnd);
@@ -184,15 +187,22 @@ MainWindow::MainWindow(QWidget *parent)
     toolBar->addWidget(pcmdPause);
     toolBar->addWidget(pcmdEnd);
 
+    //adding toolbars
 
     addToolBar(Qt::TopToolBarArea,toolBar);
+
+    addToolBar(Qt::BottomToolBarArea,answerToolbar);
+
+
     toolBar->setAllowedAreas(Qt::LeftToolBarArea | Qt::TopToolBarArea);
     toolBar->setMovable(false);
     toolBar->setIconSize(QSize(40,40));
     toolBar->setStyleSheet("spacing: 20px ");
 
+    //Central Widget
 
-
+    centralWidget = new QWidget;
+    this->setCentralWidget(centralWidget);
 
 
 
@@ -221,6 +231,57 @@ void MainWindow::logicGame()
 void MainWindow::mathGame()
 {
 
+    answerToolbar->setMovable(false);
+
+    QLabel* lbl = new QLabel("Question 1. 50 times 5 is equal to:",centralWidget);
+    lbl->setAlignment(Qt::AlignTop);
+    lbl->setMargin(100);
+
+
+    QLineEdit* answer = new QLineEdit (answerToolbar) ;
+    answerToolbar->addWidget(answer);
+
+    QPushButton* pcmdNext = new QPushButton("Next",answerToolbar);
+    QPushButton* pcmdOk = new QPushButton(answerToolbar);
+    QPushButton* pcmdTip = new QPushButton("Tip",answerToolbar);
+
+    pcmdOk->setFlat(true);
+    pcmdOk->setIcon(QPixmap(":/data/app-graphics/ok.png"));
+    pcmdOk->setIconSize(QSize(40,40));
+
+    pcmdTip->setIcon(QPixmap(":/data/app-graphics/tip.png"));
+
+
+    pcmdNext->setIcon(QPixmap(":/data/app-graphics/next.png"));
+
+    answerToolbar->addWidget(pcmdOk);
+    answerToolbar->addWidget(pcmdTip);
+    answerToolbar->addWidget(pcmdNext);
+
+
+
+    lbl->show();
+    QPushButton* pcmdA = new QPushButton ("button 1") ;
+    QPushButton* pcmdB = new QPushButton ("button 2") ;
+    QPushButton* pcmdC = new QPushButton ("button 3") ;
+    QPushButton* pcmdD = new QPushButton ("button 4") ;
+    QGridLayout* buttonsLayout = new QGridLayout;
+    buttonsLayout->setAlignment(Qt::AlignBottom);
+
+    buttonsLayout->setHorizontalSpacing(40);
+    buttonsLayout->setMargin(90);
+
+
+
+    buttonsLayout->addWidget(pcmdA,0,0);
+    buttonsLayout->addWidget(pcmdB,0,1);
+    buttonsLayout->addWidget(pcmdC,1,0);
+    buttonsLayout->addWidget(pcmdD,1,1);
+
+
+
+    centralWidget->setLayout(buttonsLayout);
+    pcmdMath->setDisabled(true);
 }
 
 void MainWindow::memoryGame()
