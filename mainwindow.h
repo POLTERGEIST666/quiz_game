@@ -13,11 +13,13 @@
 #include <QGridLayout>
 #include <QLineEdit>
 #include <QSplitter>
+#include <QStatusBar>
+#include <QFile>
+#include <QTextStream>
+#include <QMessageBox>
+#include <QDebug>
+#include <QTextBrowser>
 
-
-QT_BEGIN_NAMESPACE
-namespace Ui { class MainWindow; }
-QT_END_NAMESPACE
 
 class MainWindow : public QMainWindow
 {
@@ -29,7 +31,7 @@ public:
     void que_one();
 
 private:
-    Ui::MainWindow *ui;
+
 
     //Menu Bar
     QMenuBar* mnuBar;
@@ -88,7 +90,9 @@ private:
 
     //Central widget
     QWidget* centralWidget;
-
+    
+    //status bar
+    QStatusBar* statusBar;
 
 
 private slots:

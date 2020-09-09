@@ -14,4 +14,7 @@
         <file>app-graphics/next.png</file>
         <file>app-graphics/tip.png</file>
     </qresource>
+    <qresource prefix="/questions">
+        <file>math/mathQuestions.txt</file>
+    </qresource>
 </RCC>

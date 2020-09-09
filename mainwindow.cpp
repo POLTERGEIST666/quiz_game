@@ -203,9 +203,6 @@ MainWindow::MainWindow(QWidget *parent)
 
     centralWidget = new QWidget;
     this->setCentralWidget(centralWidget);
-
-
-
 }
 
 
@@ -232,11 +229,32 @@ void MainWindow::mathGame()
 {
 
     answerToolbar->setMovable(false);
+    QLabel* lbl = new QLabel(centralWidget);
 
-    QLabel* lbl = new QLabel("Question 1. 50 times 5 is equal to:",centralWidget);
+    QFile file("./mathQuestions.txt");
+    if(QFile::exists("./mathQuestions.txt"))
+    {
+        file.open(QIODevice::ReadWrite | QIODevice::Text);
+        QString data = file.readLine();
+        qDebug () << "data in file:" << data ;
+        lbl->setText(data);
+        qDebug()<<"file already created";
+
+        file.close();
+
+    }
+    else
+    {
+        qDebug () << "file does not exists" ;
+        file.open(QIODevice::ReadWrite | QIODevice::Text);
+        file.write("test file");
+        qDebug()<<"file created";
+        file.close();
+    }
+
     lbl->setAlignment(Qt::AlignTop);
     lbl->setMargin(100);
-
+    lbl->show();
 
     QLineEdit* answer = new QLineEdit (answerToolbar) ;
     answerToolbar->addWidget(answer);
@@ -260,7 +278,7 @@ void MainWindow::mathGame()
 
 
 
-    lbl->show();
+
     QPushButton* pcmdA = new QPushButton ("button 1") ;
     QPushButton* pcmdB = new QPushButton ("button 2") ;
     QPushButton* pcmdC = new QPushButton ("button 3") ;
