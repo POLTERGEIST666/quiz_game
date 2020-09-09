@@ -9,7 +9,8 @@
 #include <QLabel>
 #include <QToolBar>
 #include <QToolButton>
-
+#include <QPushButton>
+#include <QLineEdit>
 
 
 QT_BEGIN_NAMESPACE
@@ -71,7 +72,7 @@ private:
     QPalette mainBackgroundPallete;
 
     //Tool Bar
-    QToolBar* toolBar;
+    QToolBar* mainToolBar;
 
     QToolButton* pcmdAll;
     QToolButton* pcmdLogic;
@@ -81,8 +82,11 @@ private:
     QToolButton* pcmdPause;
     QToolButton* pcmdEnd;
 
+    //central widget
+    QWidget* centralWgt;
 
-
+    void answToolbarSetting();
+    void buttonsSetting();
 
 
 private slots:
