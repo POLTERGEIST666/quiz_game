@@ -10,8 +10,11 @@
 #include <QToolBar>
 #include <QToolButton>
 #include <QPushButton>
+#include <QGridLayout>
 #include <QLineEdit>
-
+#include <QFile>
+#include <QTextStream>
+#include <QDebug>
 
 QT_BEGIN_NAMESPACE
 namespace Ui { class MainWindow; }
@@ -73,6 +76,7 @@ private:
 
     //Tool Bar
     QToolBar* mainToolBar;
+    QToolBar* answToolbar;
 
     QToolButton* pcmdAll;
     QToolButton* pcmdLogic;
@@ -85,8 +89,20 @@ private:
     //central widget
     QWidget* centralWgt;
 
+
+    QLabel questionLabel;
+    QFile *file;
+    uint rowCount = 0;
+    QString data;
+
     void answToolbarSetting();
     void buttonsSetting();
+    void question();
+
+    //anws tool bar buttons
+    QPushButton* pcmdNext;
+    QPushButton* pcmdOk;
+    QPushButton* pcmdTip;
 
 
 private slots:
@@ -111,6 +127,13 @@ private slots:
     void preferences();
 
     void slotAbout();
+
+    void OkToolBarButton();
+    void TipToolbarButton();
+    void NextToolBarButton();
+
+
+
 
 
 };
