@@ -12,13 +12,14 @@
 #include <QPushButton>
 #include <QGridLayout>
 #include <QLineEdit>
-#include <QSplitter>
-#include <QStatusBar>
+
 #include <QFile>
 #include <QTextStream>
-#include <QMessageBox>
 #include <QDebug>
-#include <QTextBrowser>
+
+QT_BEGIN_NAMESPACE
+namespace Ui { class MainWindow; }
+QT_END_NAMESPACE
 
 
 class MainWindow : public QMainWindow
@@ -76,8 +77,10 @@ private:
     QPalette mainBackgroundPallete;
 
     //Tool Bar
-    QToolBar* toolBar;
-    QToolBar* answerToolbar;
+
+    QToolBar* mainToolBar;
+    QToolBar* answToolbar;
+
 
     QToolButton* pcmdAll;
     QToolButton* pcmdLogic;
@@ -87,12 +90,24 @@ private:
     QToolButton* pcmdPause;
     QToolButton* pcmdEnd;
 
+    //central widget
+    QWidget* centralWgt;
 
-    //Central widget
-    QWidget* centralWidget;
-    
-    //status bar
-    QStatusBar* statusBar;
+
+    QLabel questionLabel;
+    QFile *file;
+    uint rowCount = 0;
+    QString data;
+
+
+    void answToolbarSetting();
+    void buttonsSetting();
+    void question();
+
+    //anws tool bar buttons
+    QPushButton* pcmdNext;
+    QPushButton* pcmdOk;
+    QPushButton* pcmdTip;
 
 
 private slots:
@@ -117,6 +132,13 @@ private slots:
     void preferences();
 
     void slotAbout();
+
+    void OkToolBarButton();
+    void TipToolbarButton();
+    void NextToolBarButton();
+
+
+
 
 
 };

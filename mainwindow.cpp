@@ -6,13 +6,17 @@
 
 
 
+
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
 
 
 {
+    setMinimumSize(QSize(800,650));
 
-    resize(800,650);
+
+
+
     setWindowTitle("Quiz");
 
 
@@ -55,7 +59,7 @@ MainWindow::MainWindow(QWidget *parent)
 
 
 
-
+    //adding menus in menubar
     mnuBar->addMenu(pmnuGame);
     mnuBar->addMenu(pmnuView);
     mnuBar->addMenu(pmnuSettings);
@@ -70,6 +74,14 @@ MainWindow::MainWindow(QWidget *parent)
     pmnuSubMenuNewGame->addAction(pSubMenuMemoryAction);
     pmnuSubMenuNewGame->addAction(PSubMenuVerbalAction);
     pmnuSubMenuNewGame->addAction(pSubMenuCustomAction);
+
+    QObject::connect(pSubMenuAllGamesAction,SIGNAL(triggered()),SLOT(allGames()));
+    QObject::connect(pSubMenuLogicAction,SIGNAL(triggered()),SLOT(logicGame()));
+    QObject::connect(pSubMenuMathAction,SIGNAL(triggered()),SLOT(mathGame()));
+    QObject::connect(pSubMenuMemoryAction,SIGNAL(triggered()),SLOT(memoryGame()));
+    QObject::connect(PSubMenuVerbalAction,SIGNAL(triggered()),SLOT(verbalGame()));
+    QObject::connect(pSubMenuCustomAction,SIGNAL(triggered()),SLOT(customGame()));
+
 
     pmnuGame->addAction(pPauseGameAction);
     pPauseGameAction->setDisabled(true);
@@ -121,55 +133,81 @@ MainWindow::MainWindow(QWidget *parent)
 
 
 
-    toolBar = new QToolBar;
-    answerToolbar = new QToolBar;
 
+    mainToolBar = new QToolBar;
 
+    QPixmap pixAll(":/app-graphics/allgames.png");
 
-    QPixmap pixAll(":/data/app-graphics/allgames.png");
 
     pcmdAll = new QToolButton;
     pcmdAll->setToolButtonStyle(Qt::ToolButtonTextUnderIcon );
     pcmdAll->setIcon(pixAll);
     pcmdAll->setText("All");
-   // QObject::connect(pcmdAll,SIGNAL(clicked()));
 
-    QPixmap pixLogic(":/data/app-graphics/logic-games");
+    pcmdAll->setCheckable(true);
+
+    QObject::connect(pcmdAll,SIGNAL(clicked()),SLOT(allGames()));
+
+
+    QPixmap pixLogic(":/app-graphics/logic-games.png");
+
     pcmdLogic = new QToolButton();
     pcmdLogic->setToolButtonStyle(Qt::ToolButtonTextUnderIcon);
     pcmdLogic->setIcon(pixLogic);
     pcmdLogic->setText("Logic");
+    pcmdLogic->setCheckable(true);
+
+    QObject::connect(pcmdLogic,SIGNAL(clicked()),SLOT(logicGame()));
 
 
-    QPixmap pixMath(":/data/app-graphics/math-games");
+    QPixmap pixMath(":/app-graphics/math-games.png");
+
     pcmdMath = new QToolButton;
     pcmdMath->setToolButtonStyle(Qt::ToolButtonTextUnderIcon);
     pcmdMath->setIcon(pixMath);
     pcmdMath->setText("Math");
+
+    pcmdMath->setCheckable(true);
+
     QObject::connect(pcmdMath,SIGNAL(clicked()),SLOT(mathGame()));
 
-    QPixmap pixMemory(":/data/app-graphics/memory-games.png");
+
+    QPixmap pixMemory(":/app-graphics/memory-games.png");
+
     pcmdMemory = new QToolButton();
     pcmdMemory->setToolButtonStyle(Qt::ToolButtonTextUnderIcon);
     pcmdMemory->setIcon(pixMemory);
     pcmdMemory->setText("Memory");
+    pcmdMemory->setCheckable(true);
 
-    QPixmap pixVerbal(":/data/app-graphics/verbal-games.png");
+
+    QObject::connect(pcmdMemory,SIGNAL(clicked()),SLOT(memoryGame()));
+
+    QPixmap pixVerbal(":/app-graphics/verbal-games.png");
+
     pcmdVerbal = new QToolButton;
     pcmdVerbal->setToolButtonStyle(Qt::ToolButtonTextUnderIcon);
     pcmdVerbal->setIcon(pixVerbal);
     pcmdVerbal->setText("Verbal");
+    pcmdVerbal->setCheckable(true);
 
-    QPixmap pixPause(":/data/app-graphics/pause.png");
+    QObject::connect(pcmdVerbal,SIGNAL(clicked()),SLOT(verbalGame()));
+
+
+    QPixmap pixPause(":/app-graphics/pause.png");
+
     pcmdPause = new QToolButton;
     pcmdPause->setToolButtonStyle(Qt::ToolButtonTextUnderIcon);
     pcmdPause->setIcon(pixPause);
     pcmdPause->setText("Pause");
     pcmdPause->setDisabled(true);
+    pcmdPause->setCheckable(true);
+
+    QObject::connect(pcmdPause,SIGNAL(clicked()),SLOT(pause()));
 
 
+    QPixmap pixEnd(":/app-graphics/endgame.png");
 
-    QPixmap pixEnd(":/data/app-graphics/endgame.png");
     pcmdEnd = new QToolButton;
     pcmdEnd->setToolButtonStyle(Qt::ToolButtonTextUnderIcon);
     pcmdEnd->setIcon(pixEnd);
@@ -177,154 +215,224 @@ MainWindow::MainWindow(QWidget *parent)
     pcmdEnd->setDisabled(true);
 
 
+    QObject::connect(pcmdEnd,SIGNAL(clicked()),SLOT(end()));
 
 
-    toolBar->addWidget(pcmdAll);
-    toolBar->addWidget(pcmdLogic);
-    toolBar->addWidget(pcmdMath);
-    toolBar->addWidget(pcmdMemory);
-    toolBar->addWidget(pcmdVerbal);
-    toolBar->addWidget(pcmdPause);
-    toolBar->addWidget(pcmdEnd);
-
-    //adding toolbars
-
-    addToolBar(Qt::TopToolBarArea,toolBar);
-
-    addToolBar(Qt::BottomToolBarArea,answerToolbar);
+    //adding toolbar widgets
+    mainToolBar->addWidget(pcmdAll);
+    mainToolBar->addWidget(pcmdLogic);
+    mainToolBar->addWidget(pcmdMath);
+    mainToolBar->addWidget(pcmdMemory);
+    mainToolBar->addWidget(pcmdVerbal);
+    mainToolBar->addWidget(pcmdPause);
+    mainToolBar->addWidget(pcmdEnd);
 
 
-    toolBar->setAllowedAreas(Qt::LeftToolBarArea | Qt::TopToolBarArea);
-    toolBar->setMovable(false);
-    toolBar->setIconSize(QSize(40,40));
-    toolBar->setStyleSheet("spacing: 20px ");
+    addToolBar(Qt::TopToolBarArea,mainToolBar);
+    mainToolBar->setAllowedAreas(Qt::LeftToolBarArea | Qt::TopToolBarArea);
+    mainToolBar->setMovable(false);
+    mainToolBar->setIconSize(QSize(40,40));
+    mainToolBar->setStyleSheet("spacing: 20px ");
 
-    //Central Widget
 
-    centralWidget = new QWidget;
-    this->setCentralWidget(centralWidget);
+    centralWgt = new QWidget;
+
+    file = nullptr;
+
+
+    this->setCentralWidget(centralWgt);
+
+
+    
+
 }
 
 
+void MainWindow::answToolbarSetting()
+{
+    answToolbar= new QToolBar(centralWgt);
 
+
+    QPushButton* pcmdNext = new QPushButton("Next",answToolbar);
+    QPushButton* pcmdOk = new QPushButton(answToolbar);
+    QPushButton* pcmdTip = new QPushButton("Tip",answToolbar);
+
+    QLineEdit* answerInput = new QLineEdit (answToolbar);
+
+    answToolbar->addWidget(answerInput);
+    answToolbar->addWidget(pcmdOk);
+    answToolbar->addWidget(pcmdTip);
+    answToolbar->addWidget(pcmdNext);
+
+    pcmdOk->setFlat(true);
+    pcmdOk->setIconSize(QSize(40,40));
+
+    pcmdOk->setIcon(QPixmap(":/app-graphics/ok.png"));
+    pcmdTip->setIcon(QPixmap(":/app-graphics/tip.png"));
+    pcmdNext->setIcon(QPixmap(":/app-graphics/next.png"));
+
+    QObject::connect(pcmdOk,SIGNAL(clicked()),SLOT(OkToolBarButton()));
+    QObject::connect(pcmdTip,SIGNAL(clicked()),SLOT(TipToolbarButton()));
+    QObject::connect(pcmdNext,SIGNAL(clicked()),SLOT(NextToolBarButton()));
+
+
+    answToolbar->setMovable(false);
+    this->addToolBar(Qt::BottomToolBarArea,answToolbar);
+}
+
+
+void MainWindow::buttonsSetting()
+{
+    if(pcmdAll->isChecked() || pcmdLogic->isChecked() || pcmdMath->isChecked() || pcmdMemory->isChecked() || pcmdVerbal->isChecked() )
+    {
+        pSubMenuAllGamesAction->setDisabled(true);
+        pSubMenuLogicAction->setDisabled(true);
+        pSubMenuMathAction->setDisabled(true);
+        pSubMenuMemoryAction->setDisabled(true);
+        PSubMenuVerbalAction->setDisabled(true);
+        pSubMenuCustomAction->setDisabled(true);
+        pcmdAll->setDisabled(true);
+        pcmdLogic->setDisabled(true);
+        pcmdMath->setDisabled(true);
+        pcmdMemory->setDisabled(true);
+        pcmdVerbal->setDisabled(true);
+    }
+
+    if(pcmdEnd->isEnabled())
+    {
+        removeToolBar(answToolbar);
+
+        pcmdPause->setEnabled(false);
+
+        pSubMenuAllGamesAction->setEnabled(true);
+        pSubMenuLogicAction->setEnabled(true);
+        pSubMenuMathAction->setEnabled(true);
+        pSubMenuMemoryAction->setEnabled(true);
+        PSubMenuVerbalAction->setEnabled(true);
+        pSubMenuCustomAction->setEnabled(true);
+        pcmdAll->setEnabled(true);
+        pcmdLogic->setEnabled(true);
+        pcmdMath->setEnabled(true);
+        pcmdMemory->setEnabled(true);
+        pcmdVerbal->setEnabled(true);
+
+    }
+
+    if(pcmdPause->isChecked())
+    {
+        pcmdPause->setIcon(QPixmap(":/app-graphics/resume.png"));
+        pcmdPause->setText("Resume");
+
+    }
+    else {
+        pcmdPause->setIcon(QPixmap(":/app-graphics/pause.png"));
+        pcmdPause->setText("Pause");
+    }
+
+    pcmdPause->setEnabled(true);
+    pcmdEnd->setEnabled(true);
+
+    pPauseGameAction->setEnabled(true);
+    pEndGameAction->setEnabled(true);
+
+
+}
+
+void MainWindow::question()
+{
+    questionLabel.setParent(centralWgt);
+
+    file = new QFile("./mathQuestions.txt");
+
+
+
+
+    if(file->exists())
+    {
+        if(file->open(QIODevice::ReadOnly | QIODevice::Text))
+        {
+
+
+            data = QString(file->readAll()).split('\n')[rowCount++];
+
+
+
+        }
+
+    }
+
+
+
+    questionLabel.setText(data);
+
+    questionLabel.show();
+    file->close();
+
+
+}
 
 //  slots set up
+
 void MainWindow::newGame()
 {
 
-}
 
+}
 
 void MainWindow::allGames()
 {
+
+
+    buttonsSetting();
+    answToolbarSetting();
 
 }
 
 void MainWindow::logicGame()
 {
-
+    buttonsSetting();
+    answToolbarSetting();
 }
 
 void MainWindow::mathGame()
 {
 
-    answerToolbar->setMovable(false);
-    QLabel* lbl = new QLabel(centralWidget);
+    question();
+    buttonsSetting();
+    answToolbarSetting();
 
-    QFile file("./mathQuestions.txt");
-    if(QFile::exists("./mathQuestions.txt"))
-    {
-        file.open(QIODevice::ReadWrite | QIODevice::Text);
-        QString data = file.readLine();
-        qDebug () << "data in file:" << data ;
-        lbl->setText(data);
-        qDebug()<<"file already created";
-
-        file.close();
-
-    }
-    else
-    {
-        qDebug () << "file does not exists" ;
-        file.open(QIODevice::ReadWrite | QIODevice::Text);
-        file.write("test file");
-        qDebug()<<"file created";
-        file.close();
-    }
-
-    lbl->setAlignment(Qt::AlignTop);
-    lbl->setMargin(100);
-    lbl->show();
-
-    QLineEdit* answer = new QLineEdit (answerToolbar) ;
-    answerToolbar->addWidget(answer);
-
-    QPushButton* pcmdNext = new QPushButton("Next",answerToolbar);
-    QPushButton* pcmdOk = new QPushButton(answerToolbar);
-    QPushButton* pcmdTip = new QPushButton("Tip",answerToolbar);
-
-    pcmdOk->setFlat(true);
-    pcmdOk->setIcon(QPixmap(":/data/app-graphics/ok.png"));
-    pcmdOk->setIconSize(QSize(40,40));
-
-    pcmdTip->setIcon(QPixmap(":/data/app-graphics/tip.png"));
-
-
-    pcmdNext->setIcon(QPixmap(":/data/app-graphics/next.png"));
-
-    answerToolbar->addWidget(pcmdOk);
-    answerToolbar->addWidget(pcmdTip);
-    answerToolbar->addWidget(pcmdNext);
-
-
-
-
-    QPushButton* pcmdA = new QPushButton ("button 1") ;
-    QPushButton* pcmdB = new QPushButton ("button 2") ;
-    QPushButton* pcmdC = new QPushButton ("button 3") ;
-    QPushButton* pcmdD = new QPushButton ("button 4") ;
-    QGridLayout* buttonsLayout = new QGridLayout;
-    buttonsLayout->setAlignment(Qt::AlignBottom);
-
-    buttonsLayout->setHorizontalSpacing(40);
-    buttonsLayout->setMargin(90);
-
-
-
-    buttonsLayout->addWidget(pcmdA,0,0);
-    buttonsLayout->addWidget(pcmdB,0,1);
-    buttonsLayout->addWidget(pcmdC,1,0);
-    buttonsLayout->addWidget(pcmdD,1,1);
-
-
-
-    centralWidget->setLayout(buttonsLayout);
-    pcmdMath->setDisabled(true);
 }
 
 void MainWindow::memoryGame()
 {
-
+    buttonsSetting();
+    answToolbarSetting();
 }
 
 void MainWindow::verbalGame()
 {
-
+    buttonsSetting();
+    answToolbarSetting();
 }
 
 void MainWindow::customGame()
 {
-
+    buttonsSetting();
+    answToolbarSetting();
 }
-
 
 void MainWindow::pause()
 {
-
+    buttonsSetting();
 }
 
 void MainWindow::end()
 {
+
+    questionLabel.clear();
+    pcmdPause->setDisabled(true);
+    buttonsSetting();
+
 
 }
 
@@ -339,35 +447,35 @@ void MainWindow::fullScreenMode()
     }
 }
 
-
 void MainWindow::showToolbar()
 {
     if(pShowAction->isChecked())
     {
-        toolBar->setVisible(true);
+        mainToolBar->setVisible(true);
         pmnuSubMenuOrientation->setEnabled(true);
     }
     else
     {
-        toolBar->setVisible(false);
+        mainToolBar->setVisible(false);
         pmnuSubMenuOrientation->setDisabled(true);
     }
 }
 
 void MainWindow::toolBarHorizontalOrientation()
 {
-    removeToolBar(toolBar);
-    addToolBar(Qt::TopToolBarArea,toolBar);
-    toolBar->show();
+    removeToolBar(mainToolBar);
+    addToolBar(Qt::TopToolBarArea,mainToolBar);
+    mainToolBar->show();
 }
 
 void MainWindow::toolBarVerticalOrientation()
 {
-    removeToolBar(toolBar);
-    addToolBar(Qt::LeftToolBarArea,toolBar);
-    toolBar->show();
+    removeToolBar(mainToolBar);
+    addToolBar(Qt::LeftToolBarArea,mainToolBar);
+    mainToolBar->show();
 
 }
+
 void MainWindow::preferences()
 {
 
@@ -376,7 +484,7 @@ void MainWindow::preferences()
 void MainWindow::slotAbout()
 {
     //QWidget* pAbout = new QWidget;
-    QLabel* aboutLbl = new QLabel("A brain teaser game for fun and to keep your brain trained ");
+    QLabel* aboutLbl = new QLabel("A brain teaser game for fun and to keep your brain trained");
     aboutLbl->setMargin(10);
     aboutLbl->resize(400,200);
     aboutLbl->show();
@@ -385,6 +493,25 @@ void MainWindow::slotAbout()
 
 }
 
+void MainWindow::OkToolBarButton()
+{
+
+}
+
+void MainWindow::TipToolbarButton()
+{
+
+}
+
+void MainWindow::NextToolBarButton()
+{
+    data = file->readLine();
+
+
+    question();
+
+
+}
 
 MainWindow::~MainWindow()
 {
