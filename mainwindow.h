@@ -15,6 +15,11 @@
 #include <QFile>
 #include <QTextStream>
 #include <QDebug>
+#include <QFrame>
+#include <QValidator>
+
+
+
 
 QT_BEGIN_NAMESPACE
 namespace Ui { class MainWindow; }
@@ -90,19 +95,27 @@ private:
     QWidget* centralWgt;
 
 
+    //question
     QLabel questionLabel;
     QFile *file;
     uint rowCount = 0;
     QString data;
+    QFont font;
+    QString line[100];
+    int line_count = 0 ;
 
-    void answToolbarSetting();
-    void buttonsSetting();
-    void question();
+
 
     //anws tool bar buttons
     QPushButton* pcmdNext;
     QPushButton* pcmdOk;
     QPushButton* pcmdTip;
+    QString userAnswInput;
+
+
+    void answToolbarSetting();
+    void question();
+
 
 
 private slots:
