@@ -275,7 +275,7 @@ void MainWindow::question()
 
     questionLabel.setFont(font);
 
-    file = new QFile("./mathQuestions.txt");
+    file = new QFile(":/mathQuestions.txt");
 
 
     QTextStream in(file);
