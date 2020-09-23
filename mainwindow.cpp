@@ -222,13 +222,32 @@ MainWindow::MainWindow(QWidget *parent)
     mainToolBar->setStyleSheet("spacing: 20px ");
 
 
-    file = nullptr;
+
+
+
+
     this->setCentralWidget(centralWgt);
 
 }
 
+void MainWindow::questionLabelSettings()
+{
+    questionLabel = new QLabel(centralWgt);
+    questionLabel->setFixedSize(2000,90);
+    questionLabel->setContentsMargins(100,100,10,10);
+    questionLabel->show();
+    font = questionLabel->font();
+    font.setBold(true);
+    font.setPointSize(20);
+    questionLabel->setFont(font);
+    questionLabel->setFrameStyle(QFrame::Box | QFrame::Sunken);
+    questionLabel->setLineWidth(10);
+   // questionLabel->setStyleSheet("border-bottom-width: 7px; border-bottom-style: solid; border-radius: 0px;");
 
-void MainWindow::answToolbarSetting()
+
+}
+
+void MainWindow::answToolbarSettings()
 {
     answToolbar= new QToolBar(centralWgt);
 
@@ -237,9 +256,16 @@ void MainWindow::answToolbarSetting()
     pcmdOk = new QPushButton(answToolbar);
     pcmdTip = new QPushButton("Tip",answToolbar);
 
-    QLineEdit* answerInputLineEdit = new QLineEdit (answToolbar);
+    answerInputLineEdit = new QLineEdit (answToolbar);
+    answerInputLineEdit->setModified(true);
     answerInputLineEdit->setValidator(new QDoubleValidator(answerInputLineEdit));
-    userAnswInput = answerInputLineEdit->text();
+    answerInputLineEdit->setMaxLength(20);
+    answerInputLineEdit->setClearButtonEnabled(true);
+    //answerInputLineEdit->setText("Enter Answer");
+
+
+
+    //QObject::connect(answerInputLineEdit,SIGNAL(editingFinished()),SLOT(OkToolBarButton()));
 
     answToolbar->addWidget(answerInputLineEdit);
     answToolbar->addWidget(pcmdOk);
@@ -262,49 +288,19 @@ void MainWindow::answToolbarSetting()
     this->addToolBar(Qt::BottomToolBarArea,answToolbar);
 }
 
-
-
-void MainWindow::question()
+void MainWindow::mathQuestions()
 {
-    questionLabel.setParent(centralWgt);
+    mathFile.setFileName(":/game-questions/mathQuestions.txt");
 
-    font = questionLabel.font();
-    font.setPointSize(40);
-    font.setBold(true);
-
-
-    questionLabel.setFont(font);
-
-    file = new QFile("./mathQuestions.txt");
-
-
-    QTextStream in(file);
-
-
-
-    if(file->exists())
+    if(mathFile.open(QIODevice::ReadOnly | QIODevice::Text))
     {
 
-        if(file->open(QIODevice::ReadOnly | QIODevice::Text))
-        {
-
-
-
-            data = QString(file->readAll()).split('\n')[rowCount++];
-
-
-        }
+        data = mathFile.readAll().split('\n') ;
 
     }
+    mathFile.close();
 
-
-
-    questionLabel.setText(data);
-
-    questionLabel.show();
-    file->close();
-
-
+    questionLabel->setText(QString(data[0]));
 }
 
 //  slots set up
@@ -317,9 +313,7 @@ void MainWindow::newGame()
 
 void MainWindow::allGames()
 {
-
-
-    answToolbarSetting();
+    answToolbarSettings();
 
     pSubMenuAllGamesAction->setDisabled(true);
     pSubMenuLogicAction->setDisabled(true);
@@ -343,7 +337,7 @@ void MainWindow::allGames()
 void MainWindow::logicGame()
 {
 
-    answToolbarSetting();
+    answToolbarSettings();
 
     pSubMenuAllGamesAction->setDisabled(true);
     pSubMenuLogicAction->setDisabled(true);
@@ -366,9 +360,14 @@ void MainWindow::logicGame()
 
 void MainWindow::mathGame()
 {
-    question();
 
-    answToolbarSetting();
+    questionLabelSettings();
+    mathQuestions();
+
+
+   // questionLabel->show();
+
+    answToolbarSettings();
 
     pSubMenuAllGamesAction->setDisabled(true);
     pSubMenuLogicAction->setDisabled(true);
@@ -392,7 +391,7 @@ void MainWindow::mathGame()
 void MainWindow::memoryGame()
 {
 
-    answToolbarSetting();
+    answToolbarSettings();
 
     pSubMenuAllGamesAction->setDisabled(true);
     pSubMenuLogicAction->setDisabled(true);
@@ -416,7 +415,7 @@ void MainWindow::memoryGame()
 void MainWindow::verbalGame()
 {
 
-    answToolbarSetting();
+    answToolbarSettings();
 
     pSubMenuAllGamesAction->setDisabled(true);
     pSubMenuLogicAction->setDisabled(true);
@@ -461,9 +460,10 @@ void MainWindow::end()
 {
 
 
-
+    rowCount = 0;
     removeToolBar(answToolbar);
-    questionLabel.clear();
+    questionLabel->clear();
+    questionLabel->setFrameStyle(QFrame::NoFrame);
 
 
     pSubMenuAllGamesAction->setEnabled(true);
@@ -564,15 +564,12 @@ void MainWindow::slotAbout()
 
 void MainWindow::OkToolBarButton()
 {
-    if(userAnswInput=="2")
-    {
-        QLabel tmp("Right");
-        tmp.show();
-    }
-    else {
-        QLabel tmp("Wrong",centralWgt);
-        tmp.show();
-    }
+    userAnswInput = answerInputLineEdit->text();
+    pcmdOk->setDisabled(true);
+
+    qDebug()<<userAnswInput;
+    userAnswInput.clear();
+
 }
 
 void MainWindow::TipToolbarButton()
@@ -582,12 +579,17 @@ void MainWindow::TipToolbarButton()
 
 void MainWindow::NextToolBarButton()
 {
-    data = file->readLine();
+    ++rowCount;
+    if(rowCount >= data.length())
+    {
+        pcmdNext->setHidden(true);
+        return;
+    }
+    questionLabel->setText( QString(data[rowCount]));
+    questionLabel->show();
 
-    question();
-
-
-
+    pcmdOk->setEnabled(true);
+    answerInputLineEdit->clear();
 }
 
 MainWindow::~MainWindow()

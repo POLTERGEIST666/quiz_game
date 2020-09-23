@@ -12,5 +12,6 @@
         <file>app-graphics/resume.png</file>
         <file>app-graphics/tip.png</file>
         <file>app-graphics/verbal-games.png</file>
+        <file>game-questions/mathQuestions.txt</file>
     </qresource>
 </RCC>

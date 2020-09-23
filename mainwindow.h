@@ -17,6 +17,8 @@
 #include <QDebug>
 #include <QFrame>
 #include <QValidator>
+#include <QList>
+#include <QMessageBox>
 
 
 
@@ -95,27 +97,27 @@ private:
     QWidget* centralWgt;
 
 
-    //question
-    QLabel questionLabel;
-    QFile *file;
-    uint rowCount = 0;
-    QString data;
+    //questions
+    QLabel* questionLabel;
+    QFile mathFile;
+    QFile logicFile;
+    QFile memoryFile;
+    QFile verbalFile;
+    QList<QByteArray> data;
     QFont font;
-    QString line[100];
-    int line_count = 0 ;
-
-
+    int rowCount = 0;
 
     //anws tool bar buttons
     QPushButton* pcmdNext;
     QPushButton* pcmdOk;
     QPushButton* pcmdTip;
     QString userAnswInput;
+    QLineEdit* answerInputLineEdit;
 
 
-    void answToolbarSetting();
-    void question();
-
+    void answToolbarSettings();
+    void questionLabelSettings();
+    void mathQuestions();
 
 
 private slots:
