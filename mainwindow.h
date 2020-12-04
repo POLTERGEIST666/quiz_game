@@ -19,7 +19,12 @@
 #include <QValidator>
 #include <QList>
 #include <QMessageBox>
-
+#include <QSql>
+#include <QSqlTableModel>
+#include <QSqlQuery>
+#include <QDebug>
+#include <QSqlError>
+#include <QSqlRecord>
 
 
 
@@ -107,18 +112,31 @@ private:
     QFont font;
     int rowCount = 0;
 
-    //anws tool bar buttons
+    //Answers buttons
+    QPushButton* answerBtn1;
+    QPushButton* answerBtn2;
+    QPushButton* answerBtn3;
+    QPushButton* answerBtn4;
+    QGridLayout* answersGridLayout;
+
+    //anws toolbar buttons
     QPushButton* pcmdNext;
     QPushButton* pcmdOk;
     QPushButton* pcmdTip;
     QString userAnswInput;
     QLineEdit* answerInputLineEdit;
 
+    //database
+    QSqlDatabase db;
+    QStringList strName;
+    QSqlRecord rec;
 
+
+    //Functions
+    void connectingDB();
     void answToolbarSettings();
     void questionLabelSettings();
     void mathQuestions();
-
 
 private slots:
     void newGame();

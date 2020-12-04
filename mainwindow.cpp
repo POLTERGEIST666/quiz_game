@@ -9,9 +9,10 @@
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
-
-
 {
+    connectingDB();
+    mathQuestions();
+
     setMinimumSize(QSize(800,650));
     setWindowTitle("Quiz");
 
@@ -126,7 +127,6 @@ MainWindow::MainWindow(QWidget *parent)
 
     //this->setPalette(mainBackgroundPallete);
 
-
     //main toolbar
 
     mainToolBar = new QToolBar;
@@ -134,8 +134,6 @@ MainWindow::MainWindow(QWidget *parent)
     //central widget
     centralWgt = new QWidget;
 
-
-{
     QPixmap pixAll(":/app-graphics/allgames.png");
 
     pcmdAll = new QToolButton;
@@ -203,7 +201,7 @@ MainWindow::MainWindow(QWidget *parent)
 
 
     QObject::connect(pcmdEnd,SIGNAL(clicked()),SLOT(end()));
-}
+
 
     //adding toolbar widgets
     mainToolBar->addWidget(pcmdAll);
@@ -222,11 +220,39 @@ MainWindow::MainWindow(QWidget *parent)
     mainToolBar->setStyleSheet("spacing: 20px ");
 
 
+    answerBtn1 = new QPushButton;
+    answerBtn2 = new QPushButton;
+    answerBtn3 = new QPushButton;
+    answerBtn4 = new QPushButton;
+    answersGridLayout = new QGridLayout(centralWgt);
 
 
+//        answersGridLayout->addWidget(answerBtn1,0,0);
+//        answersGridLayout->addWidget(answerBtn2,0,1);
+//        answersGridLayout->addWidget(answerBtn3,1,0);
+//        answersGridLayout->addWidget(answerBtn4,1,1);
 
+    answersGridLayout->setMargin(5);
 
     this->setCentralWidget(centralWgt);
+}
+
+
+
+void MainWindow::connectingDB()
+{
+    db = QSqlDatabase::addDatabase("QMYSQL");
+    db.setHostName("127.0.0.1");
+    db.setDatabaseName("quiz_game_db");
+    db.setUserName("root");
+    db.setPassword("newrootpassword");
+    if(!db.open())
+    {
+        qDebug()<< db.lastError().text();
+    }
+    else {
+        qDebug()<< "success!";
+    }
 
 }
 
@@ -263,8 +289,6 @@ void MainWindow::answToolbarSettings()
     answerInputLineEdit->setClearButtonEnabled(true);
     //answerInputLineEdit->setText("Enter Answer");
 
-
-
     //QObject::connect(answerInputLineEdit,SIGNAL(editingFinished()),SLOT(OkToolBarButton()));
 
     answToolbar->addWidget(answerInputLineEdit);
@@ -283,24 +307,24 @@ void MainWindow::answToolbarSettings()
     QObject::connect(pcmdTip,SIGNAL(clicked()),SLOT(TipToolbarButton()));
     QObject::connect(pcmdNext,SIGNAL(clicked()),SLOT(NextToolBarButton()));
 
-
     answToolbar->setMovable(false);
     this->addToolBar(Qt::BottomToolBarArea,answToolbar);
 }
 
 void MainWindow::mathQuestions()
 {
-    mathFile.setFileName(":/game-questions/mathQuestions.txt");
-
-    if(mathFile.open(QIODevice::ReadOnly | QIODevice::Text))
+    QSqlQuery query = QSqlQuery(db);
+    if(!query.exec("select question from questions where category_id = 3 order by id"))
     {
-
-        data = mathFile.readAll().split('\n') ;
-
+        qDebug()<<query.lastError().databaseText();
+        return;
     }
-    mathFile.close();
-
-    questionLabel->setText(QString(data[0]));
+    else {
+        while (query.next()) {
+            strName.append(query.value(0).toString());
+        }
+    }
+    qDebug()<<strName;
 }
 
 //  slots set up
@@ -336,7 +360,6 @@ void MainWindow::allGames()
 
 void MainWindow::logicGame()
 {
-
     answToolbarSettings();
 
     pSubMenuAllGamesAction->setDisabled(true);
@@ -360,14 +383,10 @@ void MainWindow::logicGame()
 
 void MainWindow::mathGame()
 {
-
     questionLabelSettings();
-    mathQuestions();
-
-
-   // questionLabel->show();
-
     answToolbarSettings();
+
+    questionLabel->setText(strName[0]);
 
     pSubMenuAllGamesAction->setDisabled(true);
     pSubMenuLogicAction->setDisabled(true);
@@ -448,11 +467,13 @@ void MainWindow::pause()
     {
         pcmdPause->setIcon(QPixmap(":/app-graphics/resume.png"));
         pcmdPause->setText("Resume");
+        answToolbar->setDisabled(true);
 
     }
     else {
         pcmdPause->setIcon(QPixmap(":/app-graphics/pause.png"));
         pcmdPause->setText("Pause");
+        answToolbar->setEnabled(true);
     }
 }
 
@@ -492,12 +513,14 @@ void MainWindow::end()
     pcmdMemory->setChecked(false);
     pcmdVerbal->setChecked(false);
 
-    pcmdPause->setDisabled(true);
+
     pPauseGameAction->setDisabled(true);
     pEndGameAction->setDisabled(true);
 
     pcmdPause->setDisabled(true);
     pcmdEnd->setDisabled(true);
+
+
 
 
 
@@ -568,10 +591,11 @@ void MainWindow::OkToolBarButton()
     pcmdOk->setDisabled(true);
 
     qDebug()<<userAnswInput;
-    userAnswInput.clear();
+    //userAnswInput.clear();
+
+    qDebug()<<userAnswInput;
 
 }
-
 void MainWindow::TipToolbarButton()
 {
 
@@ -580,12 +604,13 @@ void MainWindow::TipToolbarButton()
 void MainWindow::NextToolBarButton()
 {
     ++rowCount;
-    if(rowCount >= data.length())
+    if(rowCount >= strName.length())
     {
         pcmdNext->setHidden(true);
         return;
     }
-    questionLabel->setText( QString(data[rowCount]));
+    questionLabel->setText( QString(strName[rowCount]));
+
     questionLabel->show();
 
     pcmdOk->setEnabled(true);
