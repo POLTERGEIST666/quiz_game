@@ -12,6 +12,7 @@ MainWindow::MainWindow(QWidget *parent)
 {
     connectingDB();
     mathQuestions();
+    appendingAnswersInList();
 
     setMinimumSize(QSize(800,650));
     setWindowTitle("Quiz");
@@ -236,9 +237,6 @@ MainWindow::MainWindow(QWidget *parent)
 
     this->setCentralWidget(centralWgt);
 }
-
-
-
 void MainWindow::connectingDB()
 {
     db = QSqlDatabase::addDatabase("QMYSQL");
@@ -327,6 +325,22 @@ void MainWindow::mathQuestions()
     qDebug()<<strName;
 }
 
+void MainWindow::appendingAnswersInList()
+{
+    QSqlQuery selectAnswersQuery("SELECT option_1 FROM options");
+    while (selectAnswersQuery.next()) {
+       answersList.append(selectAnswersQuery.value(0).toString());
+    }
+    qDebug()<<answersList;
+}
+
+template <typename T>
+bool MainWindow::contains(QList<T> & stringList,const T & element )
+{
+    auto it = std::find(stringList.begin(),stringList.end(),element);
+
+    return it != stringList.end();
+}
 //  slots set up
 
 void MainWindow::newGame()
@@ -591,11 +605,22 @@ void MainWindow::OkToolBarButton()
     pcmdOk->setDisabled(true);
 
     qDebug()<<userAnswInput;
-    //userAnswInput.clear();
+     bool answerFound = contains(answersList,userAnswInput);
 
-    qDebug()<<userAnswInput;
+     qDebug()<<answerFound;
+     if(answerFound)
+     {
+         qDebug()<<"Answer Correct!";
+         answToolbar->setStyleSheet("QToolButton:!hover {background-color:green} QToolBar {background: rgb(0, 255, 0)}");
+     }
+     else {
+         answToolbar->setStyleSheet("QToolButton:!hover {background-color:red} QToolBar {background: rgb(255, 0, 0)}");
+
+     }
+
 
 }
+
 void MainWindow::TipToolbarButton()
 {
 
@@ -603,6 +628,7 @@ void MainWindow::TipToolbarButton()
 
 void MainWindow::NextToolBarButton()
 {
+    answToolbar->setStyleSheet("");
     ++rowCount;
     if(rowCount >= strName.length())
     {

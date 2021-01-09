@@ -25,8 +25,8 @@
 #include <QDebug>
 #include <QSqlError>
 #include <QSqlRecord>
-
-
+#include <QString>
+//#include <QtAlgorithms>
 
 QT_BEGIN_NAMESPACE
 namespace Ui { class MainWindow; }
@@ -131,12 +131,16 @@ private:
     QStringList strName;
     QSqlRecord rec;
 
+    QStringList answersList;
 
     //Functions
     void connectingDB();
     void answToolbarSettings();
     void questionLabelSettings();
     void mathQuestions();
+    void appendingAnswersInList();
+    template <typename T>
+    bool contains(QList<T> & stringList,const T & element);
 
 private slots:
     void newGame();
