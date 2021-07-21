@@ -14,11 +14,7 @@ MainWindow::MainWindow(QWidget *parent)
 {
     setMinimumSize(QSize(800,650));
 
-
-
-
     setWindowTitle("Quiz");
-
 
     mnuBar = new QMenuBar;
     pmnuGame = new QMenu("Game");
@@ -52,19 +48,14 @@ MainWindow::MainWindow(QWidget *parent)
     //Settings menu  variables declaring
     pPreferencesACtion = new QAction("Preferences");
 
-
-
     //Help menu  variables declaring
     pAboutAction = new QAction("About");
-
-
 
     //adding menus in menubar
     mnuBar->addMenu(pmnuGame);
     mnuBar->addMenu(pmnuView);
     mnuBar->addMenu(pmnuSettings);
     mnuBar->addMenu(pmnuHelp);
-
 
     //Game Menu
     pmnuGame->addMenu(pmnuSubMenuNewGame);
@@ -89,6 +80,10 @@ MainWindow::MainWindow(QWidget *parent)
     pEndGameAction->setDisabled(true);
     pmnuGame->addSeparator();
     pmnuGame->addAction("Exit",this,SLOT(close()),Qt::Key_Escape);
+
+
+    QObject::connect(pPauseGameAction,SIGNAL(triggered()),SLOT(pause()));
+    QObject::connect(pEndGameAction,SIGNAL(triggered()),SLOT(end()));
 
     //View Menu
     pmnuView->addMenu(pmnuToolbar);
@@ -128,14 +123,24 @@ MainWindow::MainWindow(QWidget *parent)
 
 
     //setting background
+
     mainBackgroundPallete.setBrush(this->backgroundRole(),QBrush(QPixmap(":/data/app-graphics/backgroundWallpaper.jpg")));
+
     //this->setPalette(mainBackgroundPallete);
 
 
+    //main toolbar
 
 
     mainToolBar = new QToolBar;
 
+    //central widget
+    centralWgt = new QWidget;
+
+
+    mainToolBar = new QToolBar;
+
+{
     QPixmap pixAll(":/app-graphics/allgames.png");
 
 
@@ -216,7 +221,7 @@ MainWindow::MainWindow(QWidget *parent)
 
 
     QObject::connect(pcmdEnd,SIGNAL(clicked()),SLOT(end()));
-
+}
 
     //adding toolbar widgets
     mainToolBar->addWidget(pcmdAll);
@@ -235,15 +240,8 @@ MainWindow::MainWindow(QWidget *parent)
     mainToolBar->setStyleSheet("spacing: 20px ");
 
 
-    centralWgt = new QWidget;
-
     file = nullptr;
-
-
     this->setCentralWidget(centralWgt);
-
-
-    
 
 }
 
@@ -253,13 +251,15 @@ void MainWindow::answToolbarSetting()
     answToolbar= new QToolBar(centralWgt);
 
 
-    QPushButton* pcmdNext = new QPushButton("Next",answToolbar);
-    QPushButton* pcmdOk = new QPushButton(answToolbar);
-    QPushButton* pcmdTip = new QPushButton("Tip",answToolbar);
+    pcmdNext = new QPushButton("Next",answToolbar);
+    pcmdOk = new QPushButton(answToolbar);
+    pcmdTip = new QPushButton("Tip",answToolbar);
 
-    QLineEdit* answerInput = new QLineEdit (answToolbar);
+    QLineEdit* answerInputLineEdit = new QLineEdit (answToolbar);
+    answerInputLineEdit->setValidator(new QDoubleValidator(answerInputLineEdit));
+    userAnswInput = answerInputLineEdit->text();
 
-    answToolbar->addWidget(answerInput);
+    answToolbar->addWidget(answerInputLineEdit);
     answToolbar->addWidget(pcmdOk);
     answToolbar->addWidget(pcmdTip);
     answToolbar->addWidget(pcmdNext);
@@ -281,6 +281,7 @@ void MainWindow::answToolbarSetting()
 }
 
 
+
 void MainWindow::buttonsSetting()
 {
     if(pcmdAll->isChecked() || pcmdLogic->isChecked() || pcmdMath->isChecked() || pcmdMemory->isChecked() || pcmdVerbal->isChecked() )
@@ -298,63 +299,40 @@ void MainWindow::buttonsSetting()
         pcmdVerbal->setDisabled(true);
     }
 
-    if(pcmdEnd->isEnabled())
-    {
-        removeToolBar(answToolbar);
-
-        pcmdPause->setEnabled(false);
-
-        pSubMenuAllGamesAction->setEnabled(true);
-        pSubMenuLogicAction->setEnabled(true);
-        pSubMenuMathAction->setEnabled(true);
-        pSubMenuMemoryAction->setEnabled(true);
-        PSubMenuVerbalAction->setEnabled(true);
-        pSubMenuCustomAction->setEnabled(true);
-        pcmdAll->setEnabled(true);
-        pcmdLogic->setEnabled(true);
-        pcmdMath->setEnabled(true);
-        pcmdMemory->setEnabled(true);
-        pcmdVerbal->setEnabled(true);
-
-    }
-
-    if(pcmdPause->isChecked())
-    {
-        pcmdPause->setIcon(QPixmap(":/app-graphics/resume.png"));
-        pcmdPause->setText("Resume");
-
-    }
-    else {
-        pcmdPause->setIcon(QPixmap(":/app-graphics/pause.png"));
-        pcmdPause->setText("Pause");
-    }
-
-    pcmdPause->setEnabled(true);
-    pcmdEnd->setEnabled(true);
-
-    pPauseGameAction->setEnabled(true);
-    pEndGameAction->setEnabled(true);
 
 
-}
 
 void MainWindow::question()
 {
     questionLabel.setParent(centralWgt);
 
-    file = new QFile("./mathQuestions.txt");
+    font = questionLabel.font();
+    font.setPointSize(40);
+    font.setBold(true);
 
+
+
+}
+
+    questionLabel.setFont(font);
+
+
+    file = new QFile(":/mathQuestions.txt");
+
+
+    QTextStream in(file);
 
 
 
     if(file->exists())
     {
+
         if(file->open(QIODevice::ReadOnly | QIODevice::Text))
         {
 
 
-            data = QString(file->readAll()).split('\n')[rowCount++];
 
+            data = QString(file->readAll()).split('\n')[rowCount++];
 
 
         }
@@ -383,55 +361,191 @@ void MainWindow::allGames()
 {
 
 
-    buttonsSetting();
     answToolbarSetting();
+
+    pSubMenuAllGamesAction->setDisabled(true);
+    pSubMenuLogicAction->setDisabled(true);
+    pSubMenuMathAction->setDisabled(true);
+    pSubMenuMemoryAction->setDisabled(true);
+    PSubMenuVerbalAction->setDisabled(true);
+    pSubMenuCustomAction->setDisabled(true);
+    pcmdAll->setDisabled(true);
+    pcmdLogic->setDisabled(true);
+    pcmdMath->setDisabled(true);
+    pcmdMemory->setDisabled(true);
+    pcmdVerbal->setDisabled(true);
+
+    pcmdPause->setEnabled(true);
+    pcmdEnd->setEnabled(true);
+    pPauseGameAction->setEnabled(true);
+    pEndGameAction->setEnabled(true);
 
 }
 
 void MainWindow::logicGame()
 {
-    buttonsSetting();
+
     answToolbarSetting();
+
+    pSubMenuAllGamesAction->setDisabled(true);
+    pSubMenuLogicAction->setDisabled(true);
+    pSubMenuMathAction->setDisabled(true);
+    pSubMenuMemoryAction->setDisabled(true);
+    PSubMenuVerbalAction->setDisabled(true);
+    pSubMenuCustomAction->setDisabled(true);
+    pcmdAll->setDisabled(true);
+    pcmdLogic->setDisabled(true);
+    pcmdMath->setDisabled(true);
+    pcmdMemory->setDisabled(true);
+    pcmdVerbal->setDisabled(true);
+
+    pcmdPause->setEnabled(true);
+    pcmdEnd->setEnabled(true);
+    pPauseGameAction->setEnabled(true);
+    pEndGameAction->setEnabled(true);
+
 }
 
 void MainWindow::mathGame()
 {
 
     question();
-    buttonsSetting();
+
     answToolbarSetting();
+
+
+    pSubMenuAllGamesAction->setDisabled(true);
+    pSubMenuLogicAction->setDisabled(true);
+    pSubMenuMathAction->setDisabled(true);
+    pSubMenuMemoryAction->setDisabled(true);
+    PSubMenuVerbalAction->setDisabled(true);
+    pSubMenuCustomAction->setDisabled(true);
+    pcmdAll->setDisabled(true);
+    pcmdLogic->setDisabled(true);
+    pcmdMath->setDisabled(true);
+    pcmdMemory->setDisabled(true);
+    pcmdVerbal->setDisabled(true);
+
+    pcmdPause->setEnabled(true);
+    pcmdEnd->setEnabled(true);
+    pPauseGameAction->setEnabled(true);
+    pEndGameAction->setEnabled(true);
+
 
 }
 
 void MainWindow::memoryGame()
 {
-    buttonsSetting();
+
     answToolbarSetting();
+
+    pSubMenuAllGamesAction->setDisabled(true);
+    pSubMenuLogicAction->setDisabled(true);
+    pSubMenuMathAction->setDisabled(true);
+    pSubMenuMemoryAction->setDisabled(true);
+    PSubMenuVerbalAction->setDisabled(true);
+    pSubMenuCustomAction->setDisabled(true);
+    pcmdAll->setDisabled(true);
+    pcmdLogic->setDisabled(true);
+    pcmdMath->setDisabled(true);
+    pcmdMemory->setDisabled(true);
+    pcmdVerbal->setDisabled(true);
+
+    pcmdPause->setEnabled(true);
+    pcmdEnd->setEnabled(true);
+    pPauseGameAction->setEnabled(true);
+    pEndGameAction->setEnabled(true);
+
 }
 
 void MainWindow::verbalGame()
 {
-    buttonsSetting();
+
     answToolbarSetting();
+
+    pSubMenuAllGamesAction->setDisabled(true);
+    pSubMenuLogicAction->setDisabled(true);
+    pSubMenuMathAction->setDisabled(true);
+    pSubMenuMemoryAction->setDisabled(true);
+    PSubMenuVerbalAction->setDisabled(true);
+    pSubMenuCustomAction->setDisabled(true);
+    pcmdAll->setDisabled(true);
+    pcmdLogic->setDisabled(true);
+    pcmdMath->setDisabled(true);
+    pcmdMemory->setDisabled(true);
+    pcmdVerbal->setDisabled(true);
+
+    pcmdPause->setEnabled(true);
+    pcmdEnd->setEnabled(true);
+    pPauseGameAction->setEnabled(true);
+    pEndGameAction->setEnabled(true);
+
 }
 
 void MainWindow::customGame()
 {
-    buttonsSetting();
-    answToolbarSetting();
+
+
 }
 
 void MainWindow::pause()
 {
-    buttonsSetting();
+    if(pcmdPause->isChecked())
+    {
+        pcmdPause->setIcon(QPixmap(":/app-graphics/resume.png"));
+        pcmdPause->setText("Resume");
+
+    }
+    else {
+        pcmdPause->setIcon(QPixmap(":/app-graphics/pause.png"));
+        pcmdPause->setText("Pause");
+    }
 }
 
 void MainWindow::end()
 {
 
+
+
+    removeToolBar(answToolbar);
     questionLabel.clear();
+
+
+    pSubMenuAllGamesAction->setEnabled(true);
+    pSubMenuLogicAction->setEnabled(true);
+    pSubMenuMathAction->setEnabled(true);
+    pSubMenuMemoryAction->setEnabled(true);
+    PSubMenuVerbalAction->setEnabled(true);
+    pSubMenuCustomAction->setEnabled(true);
+    pcmdAll->setEnabled(true);
+    pcmdLogic->setEnabled(true);
+    pcmdMath->setEnabled(true);
+    pcmdMemory->setEnabled(true);
+    pcmdVerbal->setEnabled(true);
+
+    /////////////////////////////
+    pSubMenuAllGamesAction->setChecked(false);
+    pSubMenuLogicAction->setChecked(false);
+    pSubMenuMathAction->setChecked(false);
+    pSubMenuMemoryAction->setChecked(false);
+    PSubMenuVerbalAction->setChecked(false);
+    pSubMenuCustomAction->setChecked(false);
+    pPauseGameAction->setChecked(false);
+    pcmdAll->setChecked(false);
+    pcmdLogic->setChecked(false);
+    pcmdMath->setChecked(false);
+    pcmdMemory->setChecked(false);
+    pcmdVerbal->setChecked(false);
+
     pcmdPause->setDisabled(true);
-    buttonsSetting();
+    pPauseGameAction->setDisabled(true);
+    pEndGameAction->setDisabled(true);
+
+    pcmdPause->setDisabled(true);
+    pcmdEnd->setDisabled(true);
+
+
+
 
 
 }
@@ -495,7 +609,15 @@ void MainWindow::slotAbout()
 
 void MainWindow::OkToolBarButton()
 {
-
+    if(userAnswInput=="2")
+    {
+        QLabel tmp("Right");
+        tmp.show();
+    }
+    else {
+        QLabel tmp("Wrong",centralWgt);
+        tmp.show();
+    }
 }
 
 void MainWindow::TipToolbarButton()
@@ -507,8 +629,8 @@ void MainWindow::NextToolBarButton()
 {
     data = file->readLine();
 
-
     question();
+
 
 
 }
