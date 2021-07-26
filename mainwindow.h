@@ -12,6 +12,7 @@
 #include <QPushButton>
 #include <QGridLayout>
 #include <QLineEdit>
+
 #include <QFile>
 #include <QTextStream>
 #include <QDebug>
@@ -25,6 +26,7 @@ QT_BEGIN_NAMESPACE
 namespace Ui { class MainWindow; }
 QT_END_NAMESPACE
 
+
 class MainWindow : public QMainWindow
 {
     Q_OBJECT
@@ -32,10 +34,10 @@ class MainWindow : public QMainWindow
 public:
     MainWindow(QWidget *parent = nullptr);
     ~MainWindow();
-
+    void que_one();
 
 private:
-    Ui::MainWindow *ui;
+
 
     //Menu Bar
     QMenuBar* mnuBar;
@@ -80,8 +82,10 @@ private:
     QPalette mainBackgroundPallete;
 
     //Tool Bar
+
     QToolBar* mainToolBar;
     QToolBar* answToolbar;
+
 
     QToolButton* pcmdAll;
     QToolButton* pcmdLogic;
@@ -104,6 +108,12 @@ private:
     QString line[100];
     int line_count = 0 ;
 
+
+
+
+    void answToolbarSetting();
+    void buttonsSetting();
+    void question();
 
 
     //anws tool bar buttons

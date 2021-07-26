@@ -13,6 +13,7 @@ MainWindow::MainWindow(QWidget *parent)
 
 {
     setMinimumSize(QSize(800,650));
+
     setWindowTitle("Quiz");
 
     mnuBar = new QMenuBar;
@@ -122,12 +123,14 @@ MainWindow::MainWindow(QWidget *parent)
 
 
     //setting background
-    mainBackgroundPallete.setBrush(backgroundRole(), QBrush(QPixmap(":/app-graphics/backgroundWallpaper.jpg")));
+
+    mainBackgroundPallete.setBrush(this->backgroundRole(),QBrush(QPixmap(":/data/app-graphics/backgroundWallpaper.jpg")));
 
     //this->setPalette(mainBackgroundPallete);
 
 
     //main toolbar
+
 
     mainToolBar = new QToolBar;
 
@@ -135,19 +138,24 @@ MainWindow::MainWindow(QWidget *parent)
     centralWgt = new QWidget;
 
 
+    mainToolBar = new QToolBar;
+
 {
     QPixmap pixAll(":/app-graphics/allgames.png");
+
 
     pcmdAll = new QToolButton;
     pcmdAll->setToolButtonStyle(Qt::ToolButtonTextUnderIcon );
     pcmdAll->setIcon(pixAll);
     pcmdAll->setText("All");
+
     pcmdAll->setCheckable(true);
 
     QObject::connect(pcmdAll,SIGNAL(clicked()),SLOT(allGames()));
 
 
     QPixmap pixLogic(":/app-graphics/logic-games.png");
+
     pcmdLogic = new QToolButton();
     pcmdLogic->setToolButtonStyle(Qt::ToolButtonTextUnderIcon);
     pcmdLogic->setIcon(pixLogic);
@@ -156,26 +164,32 @@ MainWindow::MainWindow(QWidget *parent)
 
     QObject::connect(pcmdLogic,SIGNAL(clicked()),SLOT(logicGame()));
 
+
     QPixmap pixMath(":/app-graphics/math-games.png");
+
     pcmdMath = new QToolButton;
     pcmdMath->setToolButtonStyle(Qt::ToolButtonTextUnderIcon);
     pcmdMath->setIcon(pixMath);
     pcmdMath->setText("Math");
+
     pcmdMath->setCheckable(true);
 
     QObject::connect(pcmdMath,SIGNAL(clicked()),SLOT(mathGame()));
 
 
     QPixmap pixMemory(":/app-graphics/memory-games.png");
+
     pcmdMemory = new QToolButton();
     pcmdMemory->setToolButtonStyle(Qt::ToolButtonTextUnderIcon);
     pcmdMemory->setIcon(pixMemory);
     pcmdMemory->setText("Memory");
     pcmdMemory->setCheckable(true);
 
+
     QObject::connect(pcmdMemory,SIGNAL(clicked()),SLOT(memoryGame()));
 
     QPixmap pixVerbal(":/app-graphics/verbal-games.png");
+
     pcmdVerbal = new QToolButton;
     pcmdVerbal->setToolButtonStyle(Qt::ToolButtonTextUnderIcon);
     pcmdVerbal->setIcon(pixVerbal);
@@ -184,7 +198,9 @@ MainWindow::MainWindow(QWidget *parent)
 
     QObject::connect(pcmdVerbal,SIGNAL(clicked()),SLOT(verbalGame()));
 
+
     QPixmap pixPause(":/app-graphics/pause.png");
+
     pcmdPause = new QToolButton;
     pcmdPause->setToolButtonStyle(Qt::ToolButtonTextUnderIcon);
     pcmdPause->setIcon(pixPause);
@@ -194,7 +210,9 @@ MainWindow::MainWindow(QWidget *parent)
 
     QObject::connect(pcmdPause,SIGNAL(clicked()),SLOT(pause()));
 
+
     QPixmap pixEnd(":/app-graphics/endgame.png");
+
     pcmdEnd = new QToolButton;
     pcmdEnd->setToolButtonStyle(Qt::ToolButtonTextUnderIcon);
     pcmdEnd->setIcon(pixEnd);
@@ -264,6 +282,26 @@ void MainWindow::answToolbarSetting()
 
 
 
+void MainWindow::buttonsSetting()
+{
+    if(pcmdAll->isChecked() || pcmdLogic->isChecked() || pcmdMath->isChecked() || pcmdMemory->isChecked() || pcmdVerbal->isChecked() )
+    {
+        pSubMenuAllGamesAction->setDisabled(true);
+        pSubMenuLogicAction->setDisabled(true);
+        pSubMenuMathAction->setDisabled(true);
+        pSubMenuMemoryAction->setDisabled(true);
+        PSubMenuVerbalAction->setDisabled(true);
+        pSubMenuCustomAction->setDisabled(true);
+        pcmdAll->setDisabled(true);
+        pcmdLogic->setDisabled(true);
+        pcmdMath->setDisabled(true);
+        pcmdMemory->setDisabled(true);
+        pcmdVerbal->setDisabled(true);
+    }
+
+
+
+
 void MainWindow::question()
 {
     questionLabel.setParent(centralWgt);
@@ -273,7 +311,11 @@ void MainWindow::question()
     font.setBold(true);
 
 
+
+}
+
     questionLabel.setFont(font);
+
 
     file = new QFile(":/mathQuestions.txt");
 
@@ -366,9 +408,11 @@ void MainWindow::logicGame()
 
 void MainWindow::mathGame()
 {
+
     question();
 
     answToolbarSetting();
+
 
     pSubMenuAllGamesAction->setDisabled(true);
     pSubMenuLogicAction->setDisabled(true);
@@ -386,6 +430,7 @@ void MainWindow::mathGame()
     pcmdEnd->setEnabled(true);
     pPauseGameAction->setEnabled(true);
     pEndGameAction->setEnabled(true);
+
 
 }
 
